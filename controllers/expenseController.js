@@ -48,10 +48,34 @@ const deleteExpense = async (req, res) => {
     res.status(200).json({ message: `Expense ${deletedExpense.title} deleted successfully` });
 }
 
+const getExpensesByCategory = async (req, res) => {
+    const { category } = req.params;
+
+    const expenses = await Expense.find({ category: category });
+    res.status(200).json(expenses);
+};
+
+const getExpensesSortedByAmount = async (req, res) => {
+    const expenses = await Expense.find().sort({ amount: -1 });
+    res.status(200).json(expenses);
+};
+
+const searchExpensesByTitle = async (req, res) => {
+    const { title } = req.query;
+
+    const expenses = await Expense.find({
+        title: { $regex: title, $options: 'i' }
+    });
+    res.status(200).json(expenses);
+};
+
 module.exports = {
     createExpense,
     getAllExpenses,
     getExpenseById,
     updateExpense,
-    deleteExpense
+    deleteExpense,
+    getExpensesByCategory,
+    getExpensesSortedByAmount,
+    searchExpensesByTitle
 }
