@@ -1,5 +1,7 @@
 const express = require('express');
 const router = express.Router();
+const validate = require('../middleware/validate');
+const expenseSchema = require('../validators/expenseValidator');
 
 const {
     createExpense,
@@ -12,13 +14,13 @@ const {
     searchExpensesByTitle
 } = require('../controllers/expenseController');
 
-router.post('/', createExpense);
+router.post('/', validate(expenseSchema), createExpense);
 router.get('/', getAllExpenses);
 router.get('/search', searchExpensesByTitle);
 router.get('/category/:category', getExpensesByCategory);
 router.get('/sorted/amount', getExpensesSortedByAmount);
 router.get('/:id', getExpenseById);
-router.put('/:id', updateExpense);
+router.put('/:id', validate(expenseSchema), updateExpense);
 router.delete('/:id', deleteExpense);
 
 module.exports = router;
