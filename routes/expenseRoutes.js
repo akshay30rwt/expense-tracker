@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const validate = require('../middleware/validate');
-const expenseSchema = require('../validators/expenseValidator');
+const { expenseSchema } = require('../validators/expenseValidator');
 
 const {
     createExpense,
