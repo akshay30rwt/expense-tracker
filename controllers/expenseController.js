@@ -45,8 +45,8 @@ const updateExpense = async (req, res, next) => {
         const expenseId = req.params.id;
         const { title, amount, category } = req.body;
 
-        const updatedExpense = await Expense.findByIdAndUpdate(expenseId, { title, amount, category }, { new: true });
-        if(updateExpense === null) {
+        const updatedExpense = await Expense.findByIdAndUpdate(expenseId, { title, amount, category }, { new: true, runValidators: true });
+        if(updatedExpense === null) {
             throw new AppError('Expense not found', 404);
         }
         res.status(200).json(updatedExpense);
