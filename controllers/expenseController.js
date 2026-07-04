@@ -1,72 +1,110 @@
 const Expense = require('../models/Expense');
+const AppError = require('../utils/AppError');
 
-const createExpense = async (req, res) => {
-    const { title, amount, category } = req.body;
-    
-    const expense = new Expense({ title, amount, category });
-    await expense.save();
+const createExpense = async (req, res, next) => {
+    try {
+        const { title, amount, category } = req.body;
+        
+        const expense = new Expense({ title, amount, category });
+        await expense.save();
 
-    res.status(201).json(expense);
-}
-
-const getAllExpenses = async (req, res) => {
-    const expenses = await Expense.find();
-    res.status(200).json(expenses);
-}
-
-const getExpenseById = async (req, res) => {
-    const expenseId = req.params.id;
-
-    const expense = await Expense.findById(expenseId);
-    if(expense === null) {
-        res.status(404).json({ message: 'Expense not found'} );
-        return;
+        res.status(201).json(expense);
     }
-    res.status(200).json(expense);
-}
-
-const updateExpense = async (req, res) => {
-    const expenseId = req.params.id;
-    const { title, amount, category } = req.body;
-
-    const updatedExpense = await Expense.findByIdAndUpdate(expenseId, { title, amount, category }, { new: true });
-    if(updateExpense === null) {
-        res.status(404).json({ message: 'Expense not found'} );
-        return;
+    catch(error) {
+        next(error);
     }
-    res.status(200).json(updatedExpense);
 }
 
-const deleteExpense = async (req, res) => {
-    const expenseId = req.params.id;
-
-    const deletedExpense = await Expense.findByIdAndDelete(expenseId);
-    if(deletedExpense === null) {
-        res.status(404).json({ message: 'Expense not found'} );
-        return;
+const getAllExpenses = async (req, res, next) => {
+    try {
+        const expenses = await Expense.find();
+        res.status(200).json(expenses);
     }
-    res.status(200).json({ message: `Expense ${deletedExpense.title} deleted successfully` });
+    catch(error) {
+        next(error);
+    }
 }
 
-const getExpensesByCategory = async (req, res) => {
-    const { category } = req.params;
+const getExpenseById = async (req, res, next) => {
+    try {
+        const expenseId = req.params.id;
 
-    const expenses = await Expense.find({ category: category });
-    res.status(200).json(expenses);
+        const expense = await Expense.findById(expenseId);
+        if(expense === null) {
+            throw new AppError('Expense not found', 404);
+        }
+        res.status(200).json(expense);
+    }
+    catch(error) {
+        next(error);
+    }
+}
+
+const updateExpense = async (req, res, next) => {
+    try {
+        const expenseId = req.params.id;
+        const { title, amount, category } = req.body;
+
+        const updatedExpense = await Expense.findByIdAndUpdate(expenseId, { title, amount, category }, { new: true });
+        if(updateExpense === null) {
+            throw new AppError('Expense not found', 404);
+        }
+        res.status(200).json(updatedExpense);
+    }
+    catch(error) {
+        next(error);
+    }
+}
+
+const deleteExpense = async (req, res, next) => {
+    try {
+        const expenseId = req.params.id;
+
+        const deletedExpense = await Expense.findByIdAndDelete(expenseId);
+        if(deletedExpense === null) {
+            throw new AppError('Expense not found', 404);
+        }
+        res.status(200).json({ message: `Expense ${deletedExpense.title} deleted successfully` });
+    }
+    catch(error) {
+        next(error);
+    }
+}
+
+const getExpensesByCategory = async (req, res, next) => {
+    try {
+        const { category } = req.params;
+
+        const expenses = await Expense.find({ category: category });
+        res.status(200).json(expenses);
+    }
+    catch(error) {
+        next(error);
+    }
 };
 
-const getExpensesSortedByAmount = async (req, res) => {
-    const expenses = await Expense.find().sort({ amount: -1 });
-    res.status(200).json(expenses);
+const getExpensesSortedByAmount = async (req, res, next) => {
+    try {
+        const expenses = await Expense.find().sort({ amount: -1 });
+        res.status(200).json(expenses);
+    }
+    catch(error) {
+        next(error);
+    }
 };
 
-const searchExpensesByTitle = async (req, res) => {
-    const { title } = req.query;
+const searchExpensesByTitle = async (req, res, next) => {
+    try {
+        const { title } = req.query;
 
-    const expenses = await Expense.find({
-        title: { $regex: title, $options: 'i' }
-    });
-    res.status(200).json(expenses);
+        const expenses = await Expense.find({
+            title: { $regex: title, $options: 'i' }
+        });
+        res.status(200).json(expenses);
+    }
+    catch(error) {
+        next(error);
+    }
 };
 
 module.exports = {
