@@ -11,7 +11,9 @@ const {
     deleteExpense,
     getExpensesByCategory,
     getExpensesSortedByAmount,
-    searchExpensesByTitle
+    searchExpensesByTitle,
+    getCategoryReport,
+    getMonthlyReport
 } = require('../controllers/expenseController');
 
 router.post('/', validate(expenseSchema), createExpense);
@@ -19,6 +21,8 @@ router.get('/', getAllExpenses);
 router.get('/search', searchExpensesByTitle);
 router.get('/category/:category', getExpensesByCategory);
 router.get('/sorted/amount', getExpensesSortedByAmount);
+router.get('/summary/category', getCategoryReport);
+router.get('/summary/monthly', getMonthlyReport);
 router.get('/:id', getExpenseById);
 router.put('/:id', validate(expenseSchema), updateExpense);
 router.delete('/:id', deleteExpense);
