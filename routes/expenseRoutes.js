@@ -15,7 +15,8 @@ const {
     getCategoryReport,
     getMonthlyReport,
     getDailyReport,
-    getTop5Expenses
+    getTop5Expenses,
+    getExpenseCountByMonth
 } = require('../controllers/expenseController');
 
 router.post('/', validate(expenseSchema), createExpense);
@@ -30,6 +31,7 @@ router.get('/summary/category', getCategoryReport);
 router.get('/summary/daily', getDailyReport);
 router.get('/summary/monthly', getMonthlyReport);
 router.get('/summary/top5', getTop5Expenses);
+router.get('/summary/count', getExpenseCountByMonth);
 
 router.get('/:id', getExpenseById);
 

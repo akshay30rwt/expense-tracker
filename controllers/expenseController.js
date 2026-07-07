@@ -248,6 +248,34 @@ const getTop5Expenses = async (req, res, next) => {
     }
 }
 
+const getExpenseCountByMonth = async (req, res, next) => {
+    try {
+        const monthlyCount = await Expense.aggregate([
+            {
+                $group: {
+                    _id: { $month: '$date' },
+                    expenseCount: { $sum: 1 },
+                    totalAmount: { $sum: '$amount' }
+                }
+            },
+            { $sort: { _id: 1 } },
+            {
+                $project: {
+                    _id: 0,
+                    month: '$_id',
+                    expenseCount: 1,
+                    totalAmount: 1
+                }
+            }
+        ]);
+
+        return res.status(200).json(monthlyCount);
+    }
+    catch(error) {
+        next(error);
+    }
+}
+
 module.exports = {
     createExpense,
     getAllExpenses,
@@ -260,5 +288,6 @@ module.exports = {
     getCategoryReport,
     getMonthlyReport,
     getDailyReport,
-    getTop5Expenses
+    getTop5Expenses,
+    getExpenseCountByMonth
 }
