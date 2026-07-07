@@ -13,7 +13,8 @@ const {
     getExpensesSortedByAmount,
     searchExpensesByTitle,
     getCategoryReport,
-    getMonthlyReport
+    getMonthlyReport,
+    getDailyReport
 } = require('../controllers/expenseController');
 
 router.post('/', validate(expenseSchema), createExpense);
@@ -22,6 +23,7 @@ router.get('/search', searchExpensesByTitle);
 router.get('/category/:category', getExpensesByCategory);
 router.get('/sorted/amount', getExpensesSortedByAmount);
 router.get('/summary/category', getCategoryReport);
+router.get('/summary/daily', getDailyReport);
 router.get('/summary/monthly', getMonthlyReport);
 router.get('/:id', getExpenseById);
 router.put('/:id', validate(expenseSchema), updateExpense);

@@ -191,6 +191,46 @@ const getMonthlyReport = async (req, res, next) => {
     }
 }
 
+const getDailyReport = async (req, res, next) => {
+    try {
+        const { year, month } = req.query;
+
+        const report = await Expense.aggregate([
+            {
+                $match: {
+                    date: {
+                        $gte: new Date(`${year}-${month}-01`),
+                        $lte: new Date(`${year}-${month}-31`)
+                    }
+                }
+            },
+            {
+                $group: {
+                    _id: { $dayOfMonth: '$date' },
+                    totalAmount: { $sum: '$amount' },
+                    count: { $sum: 1 }
+                }
+            },
+            {
+                $sort: { _id: 1 }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    day: '$_id',
+                    totalAmount: 1,
+                    count: 1
+                }
+            }
+        ]);
+
+        return res.status(200).json(report);
+    }
+    catch(error) {
+        next(error);
+    }
+}
+
 module.exports = {
     createExpense,
     getAllExpenses,
@@ -201,5 +241,6 @@ module.exports = {
     getExpensesSortedByAmount,
     searchExpensesByTitle,
     getCategoryReport,
-    getMonthlyReport
+    getMonthlyReport,
+    getDailyReport
 }
