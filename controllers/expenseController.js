@@ -130,9 +130,7 @@ const getCategoryReport = async (req, res, next) => {
                     averageAmount: { $avg: '$amount' }
                 }
             },
-            {
-                $sort: { totalAmount: -1 }
-            },
+            { $sort: { totalAmount: -1 } },
             {
                 $project: {
                     _id: 0,
@@ -171,9 +169,7 @@ const getMonthlyReport = async (req, res, next) => {
                     count: { $sum: 1 }
                 }
             },
-            {
-                $sort: { _id: 1 }
-            },
+            { $sort: { _id: 1 } },
             {
                 $project: {
                     _id: 0,
@@ -211,9 +207,7 @@ const getDailyReport = async (req, res, next) => {
                     count: { $sum: 1 }
                 }
             },
-            {
-                $sort: { _id: 1 }
-            },
+            { $sort: { _id: 1 } },
             {
                 $project: {
                     _id: 0,
@@ -231,6 +225,29 @@ const getDailyReport = async (req, res, next) => {
     }
 }
 
+const getTop5Expenses = async (req, res, next) => {
+    try {
+        const expenses = await Expense.aggregate([
+            { $sort: { amount: -1 } },
+            { $limit: 5 },
+            {
+                $project: {
+                    _id: 0,
+                    amount: 1,
+                    title: 1,
+                    category: 1,
+                    date: 1
+                }
+            }
+        ]);
+
+        return res.status(200).json(expenses);
+    }
+    catch(error) {
+        next(error);
+    }
+}
+
 module.exports = {
     createExpense,
     getAllExpenses,
@@ -242,5 +259,6 @@ module.exports = {
     searchExpensesByTitle,
     getCategoryReport,
     getMonthlyReport,
-    getDailyReport
+    getDailyReport,
+    getTop5Expenses
 }
